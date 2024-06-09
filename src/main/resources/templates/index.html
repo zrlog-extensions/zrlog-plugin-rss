@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RSS 设置</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.gritter.css"/>
+    <link rel="stylesheet" href="assets/css/bootstrap-switch.css"/>
+
+    <script src="assets/js/jquery-2.0.3.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery.gritter.min.js"></script>
+    <script src="assets/js/bootstrap-switch.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/setting.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-size: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+            font-variant: tabular-nums;
+            line-height: 1.5;
+            font-feature-settings: 'tnum';
+            background: transparent;
+        }
+
+        .dark {
+            background-color: #000;
+            color: #fff
+        }
+    </style>
+</head>
+<body style="margin: 0" class="${theme}">
+<div id="vue-div" style="width: 100%;max-width: 960px">
+    <div class="page-header">
+        <h3>
+            RSS 设置
+        </h3>
+    </div>
+    <form role="form" id="ajaxrss" checkBox="status" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-3 control-label no-padding-right"> 文件存放地址 </label>
+            <div class="col-md-4">
+                <input type="text" placeholder="" class="form-control" :value="val(rss.uriPath)"
+                       name="uriPath">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label no-padding-right"> 说明文字 </label>
+            <div class="col-md-8">
+                <textarea placeholder="" class="form-control" name="rssText">{{rss.rssText}}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label no-padding-right"> 插件html </label>
+            <div class="col-md-8">
+                <textarea readonly="readonly" class="form-control"><plugin name="rss" view="widget"/></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label no-padding-right"> 预览 </label>
+            <div class="col-md-4">
+                <iframe src="/p/rss/widget?preview=true" style="height: 48px;width: 256px;border: 0"></iframe>
+            </div>
+        </div>
+        <hr/>
+        <div class="col-md-offset-3 col-md-9">
+            <button id="rss" type="button" class="btn btn-info">
+                提交
+            </button>
+        </div>
+    </form>
+</div>
+<input id="gritter-light" checked="" type="checkbox" style="display:none"/>
+<pre id="data" style="display: none">${data}</pre>
+</body>
+</html>
