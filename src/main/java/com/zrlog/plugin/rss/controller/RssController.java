@@ -34,7 +34,7 @@ public class RssController {
             Map<String, Object> map = new HashMap<>();
             map.put("success", true);
             session.sendMsg(new MsgPacket(map, ContentType.JSON, MsgPacketStatus.RESPONSE_SUCCESS, requestPacket.getMsgId(), requestPacket.getMethodStr()));
-            Application.getAutoRefreshFeedFile().run();
+            Application.getAutoRefreshFeedFile().doFeed();
             //更新缓存
             session.sendJsonMsg(new HashMap<>(), ActionType.REFRESH_CACHE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST);
         });
