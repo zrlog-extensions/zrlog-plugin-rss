@@ -31,20 +31,23 @@ public class AutoRefreshFeedFileRunnable implements Runnable {
 
     @Override
     public void run() {
-        String path = ioSession.getResponseSync(ContentType.JSON, new HashMap<>(), ActionType.BLOG_RUN_TIME, BlogRunTime.class).getPath();
         RssFeedResultInfo feed = new FeedService(ioSession).feed();
-        String content = feed.getContent();
         if (Objects.equals(uploadedFeedVersion, feed.getVersion())) {
             return;
         }
+        doHandle(feed);
+    }
+
+    private String doHandle(RssFeedResultInfo feed){
         uploadedFeedVersion = feed.getVersion();
         Map<String, Object> keyMap = new HashMap<>();
         keyMap.put("key", "uriPath");
         Map responseMap = ioSession.getResponseSync(ContentType.JSON, keyMap, ActionType.GET_WEBSITE, Map.class);
         String uriPath = Objects.requireNonNullElse((String) responseMap.get("uriPath"), DEFAULT_URI_PATH);
+        String path = ioSession.getResponseSync(ContentType.JSON, new HashMap<>(), ActionType.BLOG_RUN_TIME, BlogRunTime.class).getPath();
         File rssFile = new File(path + uriPath);
         rssFile.getParentFile().mkdirs();
-        IOUtil.writeBytesToFile(content.getBytes(), rssFile);
+        IOUtil.writeBytesToFile(feed.getContent().getBytes(), rssFile);
         try {
             Map<String, String[]> map = new HashMap<>();
             map.put("fileInfo", new String[]{rssFile + ",/" + rssFile.getName() + ",true"});
@@ -52,5 +55,11 @@ public class AutoRefreshFeedFileRunnable implements Runnable {
         } catch (Exception e) {
             LOGGER.warning("upload to service failed " + e.getMessage());
         }
+        return feed.getContent();
+    }
+
+    public String doFeed(){
+        RssFeedResultInfo feed = new FeedService(ioSession).feed();
+        return doHandle(feed);
     }
 }

@@ -10,7 +10,6 @@ import com.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.zrlog.plugin.render.SimpleTemplateRender;
 import com.zrlog.plugin.rss.Application;
 import com.zrlog.plugin.rss.handle.AutoRefreshFeedFileRunnable;
-import com.zrlog.plugin.rss.service.FeedService;
 import com.zrlog.plugin.type.ActionType;
 
 import java.util.HashMap;
@@ -73,7 +72,6 @@ public class RssController {
     }
 
     public void feed() {
-        String xmlContent = new FeedService(session).feed().getContent();
-        session.responseXmlStr(xmlContent, requestPacket.getMethodStr(), requestPacket.getMsgId());
+        session.responseXmlStr(Application.getAutoRefreshFeedFile().doFeed(), requestPacket.getMethodStr(), requestPacket.getMsgId());
     }
 }
