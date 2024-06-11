@@ -1,11 +1,14 @@
 package com.zrlog.plugin.rss.service;
 
+import com.zrlog.plugin.common.SecurityUtils;
 import com.zrlog.plugin.rss.vo.Article;
+import com.zrlog.plugin.rss.vo.RssFeedResultInfo;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class RSSFeedGenerator {
 
@@ -17,11 +20,11 @@ public class RSSFeedGenerator {
                 // Add more articles as needed
         );
 
-        String rss = generateRSSFeed("Example RSS Feed", "http://www.example.com", "This is an example of an RSS feed", articles);
+        String rss = generateRSSFeed("Example RSS Feed", "http://www.example.com", "This is an example of an RSS feed", articles).getContent();
         System.out.println("rss = " + rss);
     }
 
-    public static String generateRSSFeed(String title, String link, String description, List<Article> articles) {
+    public static RssFeedResultInfo generateRSSFeed(String title, String link, String description, List<Article> articles) {
         String language = "zh-cn";
         String pubDate = ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME);
         String lastBuildDate;
@@ -46,6 +49,8 @@ public class RSSFeedGenerator {
         rssContent.append("    <generator>ZrLog rss Generator</generator>\n");
 
         // Add articles from the list
+        StringJoiner rawContent = new StringJoiner("\n");
+        rawContent.add(title).add(link).add(language).add(description);
         for (Article article : articles) {
             rssContent.append("    <item>\n");
             rssContent.append("      <title><![CDATA[").append(article.getTitle()).append("]]></title>\n");
@@ -54,11 +59,17 @@ public class RSSFeedGenerator {
             rssContent.append("      <pubDate>").append(article.getPubDate()).append("</pubDate>\n");
             rssContent.append("      <guid isPermaLink=\"false\">").append(article.getGuid()).append("</guid>\n");
             rssContent.append("    </item>\n");
+            //compare
+            rawContent.add(article.getTitle());
+            rawContent.add(article.getLink());
+            rawContent.add(article.getDescription());
+            rawContent.add(article.getPubDate());
+            rawContent.add(article.getGuid());
         }
 
         rssContent.append("  </channel>\n");
         rssContent.append("</rss>\n");
 
-        return rssContent.toString();
+        return new RssFeedResultInfo(rssContent.toString(), SecurityUtils.md5(rawContent.toString()));
     }
 }

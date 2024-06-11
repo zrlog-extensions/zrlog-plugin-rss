@@ -16,6 +16,6 @@ public class ConnectHandler implements IConnectHandler {
 
     @Override
     public void handler(IOSession ioSession, MsgPacket msgPacket) {
-        executorService.scheduleAtFixedRate(new AutoRefreshFeedFile(ioSession), 0, 1, RunConstants.runType == RunType.BLOG ? TimeUnit.SECONDS : TimeUnit.HOURS);
+        executorService.scheduleAtFixedRate(new AutoRefreshFeedFile(ioSession), 0, 2, RunConstants.runType == RunType.BLOG ? TimeUnit.MINUTES : TimeUnit.HOURS);
     }
 }

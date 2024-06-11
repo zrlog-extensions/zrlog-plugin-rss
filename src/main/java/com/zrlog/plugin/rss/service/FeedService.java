@@ -5,6 +5,7 @@ import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.common.model.PublicInfo;
 import com.zrlog.plugin.data.codec.ContentType;
 import com.zrlog.plugin.rss.vo.Article;
+import com.zrlog.plugin.rss.vo.RssFeedResultInfo;
 import com.zrlog.plugin.type.ActionType;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class FeedService {
         return zonedDateTime.format(cookieExpireFormatter);
     }
 
-    public String feed() {
+    public RssFeedResultInfo feed() {
         PublicInfo publicInfo = session.getResponseSync(ContentType.JSON, new HashMap<>(), ActionType.LOAD_PUBLIC_INFO, PublicInfo.class);
         try {
             HttpClient httpClient = HttpClient.newBuilder().build();

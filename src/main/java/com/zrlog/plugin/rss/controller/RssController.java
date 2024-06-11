@@ -72,7 +72,7 @@ public class RssController {
     }
 
     public void feed() {
-        String xmlContent = new FeedService(session).feed();
+        String xmlContent = new FeedService(session).feed().getContent();
         session.responseXmlStr(xmlContent, requestPacket.getMethodStr(), requestPacket.getMsgId());
     }
 }
