@@ -8,7 +8,8 @@ import com.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.zrlog.plugin.data.codec.MsgPacket;
 import com.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.zrlog.plugin.render.SimpleTemplateRender;
-import com.zrlog.plugin.rss.handle.AutoRefreshFeedFile;
+import com.zrlog.plugin.rss.Application;
+import com.zrlog.plugin.rss.handle.AutoRefreshFeedFileRunnable;
 import com.zrlog.plugin.rss.service.FeedService;
 import com.zrlog.plugin.type.ActionType;
 
@@ -34,7 +35,7 @@ public class RssController {
             Map<String, Object> map = new HashMap<>();
             map.put("success", true);
             session.sendMsg(new MsgPacket(map, ContentType.JSON, MsgPacketStatus.RESPONSE_SUCCESS, requestPacket.getMsgId(), requestPacket.getMethodStr()));
-            new AutoRefreshFeedFile(session).run();
+            Application.getAutoRefreshFeedFile().run();
             //更新缓存
             session.sendJsonMsg(new HashMap<>(), ActionType.REFRESH_CACHE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST);
         });
@@ -48,7 +49,7 @@ public class RssController {
             Map<String, Object> data = new HashMap<>();
             data.put("theme", Objects.equals(requestInfo.getHeader().get("Dark-Mode"), "true") ? "dark" : "light");
             if (Objects.isNull(map.get("uriPath"))) {
-                map.put("uriPath", AutoRefreshFeedFile.DEFAULT_URI_PATH);
+                map.put("uriPath", AutoRefreshFeedFileRunnable.DEFAULT_URI_PATH);
             }
             data.put("data", new Gson().toJson(map));
             session.responseHtmlStr(new SimpleTemplateRender().render("/templates/index.html", session.getPlugin(), data), requestPacket.getMethodStr(), requestPacket.getMsgId());
@@ -61,7 +62,7 @@ public class RssController {
         session.sendJsonMsg(keyMap, ActionType.GET_WEBSITE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST, msgPacket -> {
             Map map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
             if (Objects.isNull(map.get("uriPath"))) {
-                map.put("uriPath", AutoRefreshFeedFile.DEFAULT_URI_PATH);
+                map.put("uriPath", AutoRefreshFeedFileRunnable.DEFAULT_URI_PATH);
             }
             if (Objects.isNull(map.get("rssText"))) {
                 map.put("rssText", "");

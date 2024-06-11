@@ -14,8 +14,15 @@ public class ConnectHandler implements IConnectHandler {
 
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
+    private AutoRefreshFeedFileRunnable autoRefreshFeedFileRunnable;
+
     @Override
     public void handler(IOSession ioSession, MsgPacket msgPacket) {
-        executorService.scheduleAtFixedRate(new AutoRefreshFeedFile(ioSession), 0, 2, RunConstants.runType == RunType.BLOG ? TimeUnit.MINUTES : TimeUnit.HOURS);
+        this.autoRefreshFeedFileRunnable = new AutoRefreshFeedFileRunnable(ioSession);
+        executorService.scheduleAtFixedRate(autoRefreshFeedFileRunnable, 0, 2, RunConstants.runType == RunType.BLOG ? TimeUnit.MINUTES : TimeUnit.HOURS);
+    }
+
+    public AutoRefreshFeedFileRunnable getAutoRefreshFeedFile() {
+        return autoRefreshFeedFileRunnable;
     }
 }

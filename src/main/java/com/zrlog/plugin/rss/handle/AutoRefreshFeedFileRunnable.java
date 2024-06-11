@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-public class AutoRefreshFeedFile implements Runnable {
+public class AutoRefreshFeedFileRunnable implements Runnable {
 
     public static final String DEFAULT_URI_PATH = "/rss.xml";
 
@@ -28,7 +28,7 @@ public class AutoRefreshFeedFile implements Runnable {
     private final IOSession ioSession;
     private static String uploadedFeedVersion;
 
-    public AutoRefreshFeedFile(IOSession ioSession) {
+    public AutoRefreshFeedFileRunnable(IOSession ioSession) {
         this.ioSession = ioSession;
     }
 
