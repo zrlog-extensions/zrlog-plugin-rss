@@ -1,13 +1,10 @@
 package com.zrlog.plugin.rss.handle;
 
-import com.google.gson.Gson;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.common.IOUtil;
-import com.zrlog.plugin.common.IdUtil;
 import com.zrlog.plugin.common.LoggerUtil;
 import com.zrlog.plugin.common.model.BlogRunTime;
 import com.zrlog.plugin.data.codec.ContentType;
-import com.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.zrlog.plugin.rss.controller.RssController;
 import com.zrlog.plugin.rss.service.FeedService;
 import com.zrlog.plugin.rss.vo.RssFeedResultInfo;
@@ -26,7 +23,7 @@ public class AutoRefreshFeedFileRunnable implements Runnable {
     private static final Logger LOGGER = LoggerUtil.getLogger(RssController.class);
 
     private final IOSession ioSession;
-    private static String uploadedFeedVersion;
+    private String uploadedFeedVersion;
 
     public AutoRefreshFeedFileRunnable(IOSession ioSession) {
         this.ioSession = ioSession;
@@ -43,20 +40,17 @@ public class AutoRefreshFeedFileRunnable implements Runnable {
         uploadedFeedVersion = feed.getVersion();
         Map<String, Object> keyMap = new HashMap<>();
         keyMap.put("key", "uriPath");
-        ioSession.sendJsonMsg(keyMap, ActionType.GET_WEBSITE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST, msgPacket -> {
-            Map responseMap = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
-            String uriPath = Objects.requireNonNullElse((String) responseMap.get("uriPath"), DEFAULT_URI_PATH);
-            File rssFile = new File(path + uriPath);
-            rssFile.getParentFile().mkdirs();
-            IOUtil.writeBytesToFile(content.getBytes(), rssFile);
-            try {
-                Map<String, String[]> map = new HashMap<>();
-                map.put("fileInfo", new String[]{rssFile + ",/" + rssFile.getName() + ",true"});
-                ioSession.requestService("uploadService", map);
-            } catch (Exception e) {
-                LOGGER.warning("upload to service failed " + e.getMessage());
-            }
-        });
-
+        Map responseMap = ioSession.getResponseSync(ContentType.JSON, keyMap, ActionType.GET_WEBSITE, Map.class);
+        String uriPath = Objects.requireNonNullElse((String) responseMap.get("uriPath"), DEFAULT_URI_PATH);
+        File rssFile = new File(path + uriPath);
+        rssFile.getParentFile().mkdirs();
+        IOUtil.writeBytesToFile(content.getBytes(), rssFile);
+        try {
+            Map<String, String[]> map = new HashMap<>();
+            map.put("fileInfo", new String[]{rssFile + ",/" + rssFile.getName() + ",true"});
+            ioSession.requestService("uploadService", map);
+        } catch (Exception e) {
+            LOGGER.warning("upload to service failed " + e.getMessage());
+        }
     }
 }
