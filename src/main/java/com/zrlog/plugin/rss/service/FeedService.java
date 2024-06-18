@@ -59,7 +59,7 @@ public class FeedService {
                     throw new RuntimeException(ex);
                 }
             });
-            httpClient.close();
+            //httpClient.close();
             return RSSFeedGenerator.generateRSSFeed(publicInfo.getTitle(), publicInfo.getHomeUrl(), "", articles);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
