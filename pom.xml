@@ -6,12 +6,15 @@
 
     <groupId>com.zrlog</groupId>
     <artifactId>plugin-rss</artifactId>
-    <version>3.0.31</version>
+    <version>3.2.2</version>
 
     <properties>
         <outputDirectory>/home/xiaochun/zrlog-plugin/</outputDirectory>
         <imageName>rss</imageName>
         <native.maven.plugin.version>0.10.2</native.maven.plugin.version>
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <native.image.mainClass>com.zrlog.plugin.rss.Application</native.image.mainClass>
         <native.image.agentMainClass>com.zrlog.plugin.rss.GraalvmAgentApplication</native.image.agentMainClass>
     </properties>
@@ -20,7 +23,7 @@
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>zrlog-plugin-common</artifactId>
-            <version>3.0.31</version>
+            <version>3.2.2</version>
         </dependency>
     </dependencies>
 

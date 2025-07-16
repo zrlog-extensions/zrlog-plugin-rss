@@ -26,12 +26,11 @@ public class RSSFeedGenerator {
 
     public static RssFeedResultInfo generateRSSFeed(String title, String link, String description, List<Article> articles) {
         String language = "zh-cn";
-        String pubDate = ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME);
         String lastBuildDate;
         if (articles.isEmpty()) {
-            lastBuildDate = pubDate;
+            lastBuildDate = ZonedDateTime.parse("2025-01-01 00:00:00",DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).format(DateTimeFormatter.RFC_1123_DATE_TIME);;
         } else {
-            lastBuildDate = articles.get(articles.size() - 1).getPubDate();
+            lastBuildDate = articles.getFirst().getPubDate();
         }
 
         // Create the RSS feed content
@@ -43,7 +42,7 @@ public class RSSFeedGenerator {
         rssContent.append("    <link><![CDATA[").append(link).append("]]></link>\n");
         rssContent.append("    <description><![CDATA[").append(description).append("]]></description>\n");
         rssContent.append("    <language>").append(language).append("</language>\n");
-        rssContent.append("    <pubDate>").append(pubDate).append("</pubDate>\n");
+        rssContent.append("    <pubDate>").append(lastBuildDate).append("</pubDate>\n");
         rssContent.append("    <lastBuildDate>").append(lastBuildDate).append("</lastBuildDate>\n");
         rssContent.append("    <docs>https://www.rssboard.org/rss-specification</docs>\n");
         rssContent.append("    <generator>ZrLog rss Generator</generator>\n");
