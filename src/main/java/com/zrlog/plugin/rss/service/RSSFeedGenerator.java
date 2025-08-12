@@ -30,7 +30,7 @@ public class RSSFeedGenerator {
         if (articles.isEmpty()) {
             lastBuildDate = ZonedDateTime.parse("2025-01-01 00:00:00",DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).format(DateTimeFormatter.RFC_1123_DATE_TIME);;
         } else {
-            lastBuildDate = articles.getFirst().getPubDate();
+            lastBuildDate = articles.get(0).getPubDate();
         }
 
         // Create the RSS feed content

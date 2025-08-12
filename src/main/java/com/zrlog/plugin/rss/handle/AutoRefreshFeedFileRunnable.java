@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AutoRefreshFeedFileRunnable implements Runnable {
@@ -31,14 +32,18 @@ public class AutoRefreshFeedFileRunnable implements Runnable {
 
     @Override
     public void run() {
-        RssFeedResultInfo feed = new FeedService(ioSession).feed();
-        if (Objects.equals(uploadedFeedVersion, feed.getVersion())) {
-            return;
+        try {
+            RssFeedResultInfo feed = new FeedService(ioSession).feed();
+            if (Objects.equals(uploadedFeedVersion, feed.getVersion())) {
+                return;
+            }
+            doHandle(feed);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
-        doHandle(feed);
     }
 
-    private String doHandle(RssFeedResultInfo feed){
+    private String doHandle(RssFeedResultInfo feed) {
         uploadedFeedVersion = feed.getVersion();
         Map<String, Object> keyMap = new HashMap<>();
         keyMap.put("key", "uriPath");
@@ -58,7 +63,7 @@ public class AutoRefreshFeedFileRunnable implements Runnable {
         return feed.getContent();
     }
 
-    public String doFeed(){
+    public String doFeed() {
         RssFeedResultInfo feed = new FeedService(ioSession).feed();
         return doHandle(feed);
     }
