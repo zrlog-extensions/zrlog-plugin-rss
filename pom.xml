@@ -6,7 +6,7 @@
 
     <groupId>com.zrlog</groupId>
     <artifactId>plugin-rss</artifactId>
-    <version>3.2.2</version>
+    <version>3.2.12</version>
 
     <properties>
         <outputDirectory>/home/xiaochun/zrlog-plugin/</outputDirectory>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>zrlog-plugin-common</artifactId>
-            <version>3.2.8</version>
+            <version>3.2.12</version>
         </dependency>
     </dependencies>
 

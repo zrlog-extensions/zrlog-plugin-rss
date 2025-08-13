@@ -10,6 +10,7 @@ import com.zrlog.plugin.type.ActionType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -36,7 +37,7 @@ public class FeedService {
 
     public RssFeedResultInfo feed() {
         PublicInfo publicInfo = session.getResponseSync(ContentType.JSON, new HashMap<>(), ActionType.LOAD_PUBLIC_INFO, PublicInfo.class);
-        Map info = HttpClientUtils.sendGetRequest(publicInfo.getApiHomeUrl() + "/api/article?size=50000&feed=true", Map.class, session);
+        Map info = HttpClientUtils.sendGetRequest(publicInfo.getApiHomeUrl() + "/api/article?size=50000&feed=true", Map.class, session, Duration.ofSeconds(30));
         Map<String, Object> data = (Map<String, Object>) info.get("data");
         List<Map<String, Object>> rows = (List<Map<String, Object>>) data.get("rows");
         List<Article> articles = new ArrayList<>();
