@@ -45,7 +45,7 @@ public class FeedService {
             try {
                 Date releaseTime = new SimpleDateFormat("yyyy-MM-dd").parse((String) e.get("releaseTime"));
                 String pubDate = toGMTString(releaseTime);
-                articles.add(new Article((String) e.get("title"), "https:" + e.get("url"),
+                articles.add(new Article((String) e.get("title"), publicInfo.getHomeUrl() + e.get("url"),
                         Objects.requireNonNullElse((String) e.get("content"), ""), pubDate, ((Double) e.get("id")).longValue() + ""));
             } catch (ParseException ex) {
                 throw new RuntimeException(ex);
