@@ -17,3 +17,4 @@
 rss.bgv
 .DS_Store
 src/main/frontend/node_modules
+src/main/resources/templates
