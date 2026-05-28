@@ -70,7 +70,7 @@ public class RssController {
                 map.put("rssText", "");
             }
             map.put("target", requestInfo.simpleParam().containsKey("preview") ? "_blank" : "_top");
-            session.responseHtmlStr(new SimpleTemplateRender().render("/templates/widget", session.getPlugin(), map), requestPacket.getMethodStr(), requestPacket.getMsgId());
+            session.responseHtmlStr(new SimpleTemplateRender().render("/widget", session.getPlugin(), map), requestPacket.getMethodStr(), requestPacket.getMsgId());
         });
     }
 
