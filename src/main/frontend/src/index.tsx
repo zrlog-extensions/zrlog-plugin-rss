@@ -25,6 +25,7 @@ export interface Plugin {
 
 export interface RssInfoResponse {
     dark: boolean;
+    colorPrimary?: string;
     adminColorPrimary?: string;
     plugin: Plugin;
     uriPath: string;
@@ -69,9 +70,9 @@ const Index = () => {
             locale={zhCN}
             theme={{
                 algorithm: response.data.dark ? darkAlgorithm : defaultAlgorithm,
-                token: response.data.adminColorPrimary ? {
-                    colorPrimary: response.data.adminColorPrimary,
-                } : undefined,
+                token: {
+                    colorPrimary: response.data.colorPrimary || response.data.adminColorPrimary || "#1677ff",
+                },
             }}
         >
             <StyleProvider transformers={[legacyLogicalPropertiesTransformer]}>

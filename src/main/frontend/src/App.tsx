@@ -59,7 +59,7 @@ const Title = styled.h1`
   font-size: 26px;
   line-height: 34px;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
 `;
 
 const SubTitle = styled.div<{ $token: any }>`
@@ -71,8 +71,7 @@ const SubTitle = styled.div<{ $token: any }>`
 
 const FormCard = styled(Card)<{ $token: any }>`
   border: 1px solid ${props => props.$token.colorBorderSecondary};
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  border-radius: ${props => props.$token.borderRadiusLG}px;
   margin-bottom: 24px;
 `;
 

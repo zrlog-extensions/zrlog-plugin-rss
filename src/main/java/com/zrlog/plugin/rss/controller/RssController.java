@@ -89,6 +89,7 @@ public class RssController {
     private Map<String, Object> pageData(Map websiteMap) {
         Map<String, Object> data = new HashMap<>();
         data.put("dark", isDarkMode());
+        data.put("colorPrimary", getAdminColorPrimary());
         data.put("adminColorPrimary", getAdminColorPrimary());
         data.put("plugin", session.getPlugin());
         
