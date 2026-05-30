@@ -6,6 +6,7 @@ import com.zrlog.plugin.render.SimpleTemplateRender;
 import com.zrlog.plugin.rss.controller.RssController;
 import com.zrlog.plugin.rss.handle.AutoRefreshFeedFileRunnable;
 import com.zrlog.plugin.rss.handle.ConnectHandler;
+import com.zrlog.plugin.rss.service.RssRefreshService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,11 +22,11 @@ public class Application {
     public static void main(String[] args) throws IOException {
         List<Class<?>> classList = new ArrayList<>();
         classList.add(RssController.class);
-        new NioClient(rssConnectHandler, new SimpleTemplateRender(), new RssClientActionHandler()).connectServer(args, classList, RssPluginAction.class);
+        new NioClient(rssConnectHandler, new SimpleTemplateRender(), new RssClientActionHandler())
+                .connectServer(args, classList, RssPluginAction.class, RssRefreshService.class);
     }
 
     public static AutoRefreshFeedFileRunnable getAutoRefreshFeedFile() {
         return rssConnectHandler.getAutoRefreshFeedFile();
     }
 }
-
