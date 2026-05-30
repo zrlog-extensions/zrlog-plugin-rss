@@ -15,8 +15,8 @@ import java.util.Map;
 @Service("rss.refreshFeed")
 @ScheduledCapability(
         key = "rss.refreshFeed",
-        label = "刷新 RSS 订阅源",
-        description = "生成 RSS 文件并同步到配置的静态资源存储",
+        label = "刷新 RSS 文件",
+        description = "重新生成 RSS feed，并同步到配置的静态资源存储。",
         defaultCron = "*/5 * * * *",
         timeoutSeconds = 120
 )

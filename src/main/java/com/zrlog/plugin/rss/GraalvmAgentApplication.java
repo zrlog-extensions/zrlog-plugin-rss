@@ -11,8 +11,6 @@ public class GraalvmAgentApplication {
 
 
     public static void main(String[] args) throws IOException {
-        //new Gson().toJson(new User());
-        //new Gson().toJson(new CommentsEntry());
         String basePath = System.getProperty("user.dir").replace("\\target","").replace("/target", "");
         //PathKit.setRootPath(basePath);
         File file = new File(basePath + "/src/main/resources");
