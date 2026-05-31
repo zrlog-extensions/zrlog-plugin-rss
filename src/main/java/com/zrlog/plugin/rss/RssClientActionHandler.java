@@ -22,9 +22,4 @@ public class RssClientActionHandler extends ClientActionHandler {
             super.httpMethod(session, msgPacket);
         }
     }
-
-    @Override
-    public void refreshCache(IOSession session, MsgPacket msgPacket) {
-        Application.getAutoRefreshFeedFile().run();
-    }
 }
