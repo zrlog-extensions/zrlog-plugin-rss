@@ -10,7 +10,7 @@ import {
 } from "antd";
 import axios from "axios";
 import {FunctionComponent, useState} from "react";
-import styled, {createGlobalStyle} from "styled-components";
+import styled from "styled-components";
 import {RssInfoResponse, StandardResponse} from "./index";
 import {CopyOutlined, SaveOutlined, GlobalOutlined, InfoCircleOutlined} from "@ant-design/icons";
 
@@ -31,16 +31,6 @@ const requestUpdate = async (params: Record<string, string>) => {
     });
     return data;
 };
-
-// CSS-in-JS Styled Components
-const GlobalStyle = createGlobalStyle<{ $token: any }>`
-  body {
-    margin: 0;
-    background-color: ${props => props.$token.colorBgLayout};
-    color: ${props => props.$token.colorText};
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  }
-`;
 
 const Shell = styled.div`
   width: 100%;
@@ -97,7 +87,7 @@ const PreviewFrameWrapper = styled.div<{ $token: any }>`
 `;
 
 const CodeBlock = styled.div<{ $token: any }>`
-  background: ${props => props.$token.colorBgLayout};
+  background: ${props => props.$token.colorFillTertiary};
   border: 1px solid ${props => props.$token.colorBorder};
   border-radius: 6px;
   padding: 10px 14px;
@@ -153,7 +143,6 @@ const App: FunctionComponent<AppProps> = ({data}) => {
 
     return (
         <Shell>
-            <GlobalStyle $token={token} />
             {contextHolder}
 
             <HeaderSection>
