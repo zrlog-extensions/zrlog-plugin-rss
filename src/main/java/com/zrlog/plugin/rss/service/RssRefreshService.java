@@ -1,6 +1,7 @@
 package com.zrlog.plugin.rss.service;
 
 import com.zrlog.plugin.IOSession;
+import com.zrlog.plugin.api.Capability;
 import com.zrlog.plugin.api.IPluginService;
 import com.zrlog.plugin.api.ScheduledCapability;
 import com.zrlog.plugin.api.Service;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service("rss.refreshFeed")
+@Capability(key = "rss.refreshFeed", riskLevel = "medium")
 @ScheduledCapability(
         key = "rss.refreshFeed",
         label = "刷新 RSS 文件",

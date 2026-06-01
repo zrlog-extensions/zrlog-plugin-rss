@@ -13,6 +13,7 @@ import com.zrlog.plugin.data.codec.MsgPacket;
         label = "刷新 RSS 缓存",
         description = "响应系统缓存刷新事件，重新生成 RSS feed 并同步静态资源。",
         exposure = {"runtime_event"},
+        riskLevel = "medium",
         timeoutSeconds = 120,
         channel = "system.refreshCache"
 )
