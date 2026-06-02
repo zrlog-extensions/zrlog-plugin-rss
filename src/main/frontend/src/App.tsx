@@ -2,6 +2,7 @@ import {
     Button,
     Card,
     Form,
+    Grid,
     Input,
     Typography,
     message,
@@ -38,10 +39,22 @@ const Shell = styled.div`
   margin: 0 auto;
   padding: 24px 16px;
   box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    padding: 16px;
+  }
+
+  @media (max-width: 575px) {
+    padding: 12px;
+  }
 `;
 
 const HeaderSection = styled.div`
   margin-bottom: 24px;
+
+  @media (max-width: 575px) {
+    margin-bottom: 16px;
+  }
 `;
 
 const Title = styled.h1`
@@ -63,6 +76,12 @@ const FormCard = styled(Card)<{ $token: any }>`
   border: 1px solid ${props => props.$token.colorBorderSecondary};
   border-radius: ${props => props.$token.borderRadiusLG}px;
   margin-bottom: 24px;
+
+  .ant-card-body {
+    @media (max-width: 575px) {
+      padding: 16px;
+    }
+  }
 `;
 
 const SectionTitle = styled.h3<{ $token: any }>`
@@ -99,10 +118,22 @@ const CodeBlock = styled.div<{ $token: any }>`
   align-items: center;
   gap: 12px;
   margin-top: 8px;
+
+  code {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 575px) {
+    align-items: stretch;
+    flex-direction: column;
+  }
 `;
 
 const App: FunctionComponent<AppProps> = ({data}) => {
     const {token} = theme.useToken();
+    const screens = Grid.useBreakpoint();
+    const isPhone = Boolean(screens.xs && !screens.sm);
     const [rss, setRss] = useState<RssFormValues>({
         uriPath: data.uriPath || "feed",
         rssText: data.rssText || "",
@@ -198,7 +229,7 @@ const App: FunctionComponent<AppProps> = ({data}) => {
                             size="large"
                             loading={loading}
                             htmlType="submit"
-                            style={{minWidth: 120}}
+                            style={isPhone ? {width: "100%"} : {minWidth: 120}}
                         >
                             保存设置
                         </Button>
@@ -222,6 +253,7 @@ const App: FunctionComponent<AppProps> = ({data}) => {
                             size="small"
                             icon={<CopyOutlined />}
                             onClick={handleCopy}
+                            style={isPhone ? {width: "100%"} : undefined}
                         >
                             复制
                         </Button>
