@@ -244,7 +244,7 @@ const App: FunctionComponent<AppProps> = ({data}) => {
 
                 <div style={{marginBottom: 20}}>
                     <Paragraph>
-                        如需在前台侧边栏或小工具区域显示 RSS 订阅入口，可在主题或页面中插入以下插件标记：
+                        如需在站点侧边栏或小工具区域显示 RSS 订阅入口，可在主题或页面中插入以下插件标记：
                     </Paragraph>
                     <CodeBlock $token={token}>
                         <code>&lt;plugin name="rss" view="widget"/&gt;</code>
