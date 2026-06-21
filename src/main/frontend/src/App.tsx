@@ -178,7 +178,7 @@ const App: FunctionComponent<AppProps> = ({data}) => {
 
             <HeaderSection>
                 <Title>RSS 订阅设置</Title>
-                <SubTitle $token={token}>配置 RSS 文件路径和小工具文案，插件会生成 Feed XML 订阅源。</SubTitle>
+                <SubTitle $token={token}>配置 RSS 文件路径和小工具文案，插件会生成 Feed XML 订阅源</SubTitle>
             </HeaderSection>
 
             <Form form={form} layout="vertical" initialValues={rss} onFinish={handleSave}>
@@ -213,8 +213,8 @@ const App: FunctionComponent<AppProps> = ({data}) => {
                         message="提示"
                         description={
                             <span>
-                                保存设置后，RSS 插件会更新 XML 数据源；文章发布或修改后会重新生成订阅文件。订阅源可通过地址
-                                <Text code>{`/${form.getFieldValue("uriPath") || rss.uriPath}`}</Text> 进行访问。
+                                保存设置后，RSS 插件会更新 XML 数据源；文章发布或修改后会重新生成订阅文件，订阅源可通过地址
+                                <Text code>{`/${form.getFieldValue("uriPath") || rss.uriPath}`}</Text> 访问
                             </span>
                         }
                         type="info"
