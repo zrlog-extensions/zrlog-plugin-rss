@@ -7,6 +7,7 @@ import com.zrlog.plugin.common.model.BlogRunTime;
 import com.zrlog.plugin.data.codec.ContentType;
 import com.zrlog.plugin.rss.controller.RssController;
 import com.zrlog.plugin.rss.service.FeedService;
+import com.zrlog.plugin.rss.vo.RssConfig;
 import com.zrlog.plugin.rss.vo.RssFeedResultInfo;
 import com.zrlog.plugin.type.ActionType;
 
@@ -47,8 +48,10 @@ public class AutoRefreshFeedFileRunnable implements Runnable {
         uploadedFeedVersion = feed.getVersion();
         Map<String, Object> keyMap = new HashMap<>();
         keyMap.put("key", "uriPath");
-        Map responseMap = ioSession.getResponseSync(ContentType.JSON, keyMap, ActionType.GET_WEBSITE, Map.class);
-        String uriPath = Objects.requireNonNullElse((String) responseMap.get("uriPath"), DEFAULT_URI_PATH);
+        RssConfig config = ioSession.getResponseSync(ContentType.JSON, keyMap, ActionType.GET_WEBSITE, RssConfig.class);
+        String uriPath = config == null || config.getUriPath() == null || config.getUriPath().trim().isEmpty()
+                ? DEFAULT_URI_PATH
+                : config.getUriPath();
         String path = ioSession.getResponseSync(ContentType.JSON, new HashMap<>(), ActionType.BLOG_RUN_TIME, BlogRunTime.class).getPath();
         File rssFile = new File(path + uriPath);
         rssFile.getParentFile().mkdirs();

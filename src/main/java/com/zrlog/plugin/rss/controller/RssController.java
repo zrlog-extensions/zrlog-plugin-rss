@@ -10,11 +10,15 @@ import com.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.zrlog.plugin.render.SimpleTemplateRender;
 import com.zrlog.plugin.rss.Application;
 import com.zrlog.plugin.rss.handle.AutoRefreshFeedFileRunnable;
+import com.zrlog.plugin.rss.vo.RssApiResponse;
+import com.zrlog.plugin.rss.vo.RssConfig;
+import com.zrlog.plugin.rss.vo.RssPageData;
+import com.zrlog.plugin.rss.vo.WebsiteKeyRequest;
 import com.zrlog.plugin.type.ActionType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -32,53 +36,38 @@ public class RssController {
     }
 
     public void update() {
-        session.sendMsg(new MsgPacket(params(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, IdUtil.getInt(), ActionType.SET_WEBSITE.name()), msgPacket -> {
+        session.sendMsg(new MsgPacket(requestConfig(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, IdUtil.getInt(), ActionType.SET_WEBSITE.name()), msgPacket -> {
             //更新缓存
             int msgId = IdUtil.getInt();
             session.sendJsonMsg(new HashMap<>(), ActionType.REFRESH_CACHE.name(), msgId, MsgPacketStatus.SEND_REQUEST);
             MsgPacket packetByMsgId = session.getResponseMsgPacketByMsgId(msgId);
             //response ok
-            Map<String, Object> map = new HashMap<>();
-            map.put("success", Objects.nonNull(packetByMsgId));
-            session.sendMsg(new MsgPacket(map, ContentType.JSON, MsgPacketStatus.RESPONSE_SUCCESS, requestPacket.getMsgId(), requestPacket.getMethodStr()));
+            response(RssApiResponse.success(Objects.nonNull(packetByMsgId)));
             Application.getAutoRefreshFeedFile().doFeed();
         });
     }
 
     public void index() {
-        Map<String, Object> keyMap = new HashMap<>();
-        keyMap.put("key", "uriPath,rssText");
-        session.sendJsonMsg(keyMap, ActionType.GET_WEBSITE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST, msgPacket -> {
-            Map map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
+        session.sendJsonMsg(WebsiteKeyRequest.of("uriPath,rssText"), ActionType.GET_WEBSITE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST, msgPacket -> {
+            RssConfig config = normalizeConfig(gson.fromJson(msgPacket.getDataStr(), RssConfig.class));
             Map<String, Object> data = new HashMap<>();
             data.put("theme", isDarkMode() ? "dark" : "light");
-            data.put("data", gson.toJson(successMap(pageData(map))));
+            data.put("data", gson.toJson(RssApiResponse.success(pageData(config))));
             session.responseHtmlStr(new SimpleTemplateRender().render("/templates/index", session.getPlugin(), data), requestPacket.getMethodStr(), requestPacket.getMsgId());
         });
     }
 
     public void json() {
-        Map<String, Object> keyMap = new HashMap<>();
-        keyMap.put("key", "uriPath,rssText");
-        session.sendJsonMsg(keyMap, ActionType.GET_WEBSITE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST, msgPacket -> {
-            Map map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
-            response(successMap(pageData(map)));
+        session.sendJsonMsg(WebsiteKeyRequest.of("uriPath,rssText"), ActionType.GET_WEBSITE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST, msgPacket -> {
+            response(RssApiResponse.success(pageData(normalizeConfig(gson.fromJson(msgPacket.getDataStr(), RssConfig.class)))));
         });
     }
 
     public void widget() {
-        Map<String, Object> keyMap = new HashMap<>();
-        keyMap.put("key", "uriPath,rssText");
-        session.sendJsonMsg(keyMap, ActionType.GET_WEBSITE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST, msgPacket -> {
-            Map map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
-            if (Objects.isNull(map.get("uriPath"))) {
-                map.put("uriPath", AutoRefreshFeedFileRunnable.DEFAULT_URI_PATH);
-            }
-            if (Objects.isNull(map.get("rssText"))) {
-                map.put("rssText", "");
-            }
-            map.put("target", requestInfo.simpleParam().containsKey("preview") ? "_blank" : "_top");
-            session.responseHtmlStr(new SimpleTemplateRender().render("/widget", session.getPlugin(), map), requestPacket.getMethodStr(), requestPacket.getMsgId());
+        session.sendJsonMsg(WebsiteKeyRequest.of("uriPath,rssText"), ActionType.GET_WEBSITE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST, msgPacket -> {
+            Map<String, Object> data = configMap(normalizeConfig(gson.fromJson(msgPacket.getDataStr(), RssConfig.class)));
+            data.put("target", hasParam("preview") ? "_blank" : "_top");
+            session.responseHtmlStr(new SimpleTemplateRender().render("/widget", session.getPlugin(), data), requestPacket.getMethodStr(), requestPacket.getMsgId());
         });
     }
 
@@ -86,55 +75,67 @@ public class RssController {
         session.responseXmlStr(Application.getAutoRefreshFeedFile().doFeed(), requestPacket.getMethodStr(), requestPacket.getMsgId());
     }
 
-    private Map<String, Object> pageData(Map websiteMap) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("dark", isDarkMode());
-        data.put("colorPrimary", getAdminColorPrimary());
-        data.put("adminColorPrimary", getAdminColorPrimary());
-        data.put("plugin", session.getPlugin());
-        
-
-        String uriPath = websiteMap != null ? stringValue(websiteMap.get("uriPath")) : "";
-        if (uriPath == null || uriPath.trim().isEmpty()) {
-            uriPath = AutoRefreshFeedFileRunnable.DEFAULT_URI_PATH;
-        }
-        data.put("uriPath", uriPath);
-        data.put("rssText", websiteMap != null ? stringValue(websiteMap.get("rssText")) : "");
+    private RssPageData pageData(RssConfig config) {
+        RssPageData data = new RssPageData();
+        data.setDark(isDarkMode());
+        data.setColorPrimary(getAdminColorPrimary());
+        data.setAdminColorPrimary(getAdminColorPrimary());
+        data.setPlugin(session.getPlugin());
+        data.setUriPath(config.getUriPath());
+        data.setRssText(config.getRssText());
         return data;
     }
 
-    private Map<String, Object> params() {
+    private RssConfig requestConfig() {
         if (requestInfo.getRequestBody() != null && requestInfo.getRequestBody().length > 0) {
             String body = new String(requestInfo.getRequestBody(), StandardCharsets.UTF_8);
             if (body.trim().startsWith("{")) {
-                return gson.fromJson(body, Map.class);
+                return normalizeConfig(gson.fromJson(body, RssConfig.class));
             }
         }
-        if (requestInfo.getParam() == null) {
-            return new HashMap<>();
-        }
-        return requestInfo.simpleParam();
+        return normalizeConfig(configFromParams());
     }
 
-    private Map<String, Object> successMap(Object data) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("success", true);
-        map.put("data", data);
+    private RssConfig configFromParams() {
+        RssConfig config = new RssConfig();
+        config.setUriPath(paramValue("uriPath"));
+        config.setRssText(paramValue("rssText"));
+        return config;
+    }
+
+    private RssConfig normalizeConfig(RssConfig config) {
+        if (config == null) {
+            config = new RssConfig();
+        }
+        if (config.getUriPath() == null || config.getUriPath().trim().isEmpty()) {
+            config.setUriPath(AutoRefreshFeedFileRunnable.DEFAULT_URI_PATH);
+        }
+        if (config.getRssText() == null) {
+            config.setRssText("");
+        }
+        return config;
+    }
+
+    private Map<String, Object> configMap(RssConfig config) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("uriPath", config.getUriPath());
+        map.put("rssText", config.getRssText());
         return map;
     }
 
-    private void response(Map<String, Object> map) {
-        session.sendMsg(new MsgPacket(map, ContentType.JSON, MsgPacketStatus.RESPONSE_SUCCESS, requestPacket.getMsgId(), requestPacket.getMethodStr()));
+    private void response(Object data) {
+        session.sendMsg(new MsgPacket(data, ContentType.JSON, MsgPacketStatus.RESPONSE_SUCCESS, requestPacket.getMsgId(), requestPacket.getMethodStr()));
     }
 
-    private String stringValue(Object value) {
-        if (value == null) {
+    private boolean hasParam(String key) {
+        return requestInfo.getParam() != null && requestInfo.getParam().containsKey(key);
+    }
+
+    private String paramValue(String key) {
+        if (requestInfo.getParam() == null || requestInfo.getParam().get(key) == null || requestInfo.getParam().get(key).length == 0) {
             return "";
         }
-        if (value instanceof List && !((List) value).isEmpty()) {
-            return String.valueOf(((List) value).get(0));
-        }
-        return String.valueOf(value);
+        return requestInfo.getParam().get(key)[0];
     }
 
     private boolean isDarkMode() {
