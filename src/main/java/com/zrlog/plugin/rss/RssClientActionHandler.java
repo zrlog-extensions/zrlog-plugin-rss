@@ -10,6 +10,10 @@ import com.zrlog.plugin.rss.controller.RssController;
 
 public class RssClientActionHandler extends ClientActionHandler {
 
+    /** Services wait for their owned work; legacy HTTP callbacks do not declare completed view rendering. */
+    @Override
+    public int capabilityLifecycleVersion() { return 1; }
+
     @Override
     public void httpMethod(IOSession session, MsgPacket msgPacket) {
         if (msgPacket.getStatus() == MsgPacketStatus.RESPONSE_ERROR || msgPacket.getStatus() == MsgPacketStatus.RESPONSE_SUCCESS) {
