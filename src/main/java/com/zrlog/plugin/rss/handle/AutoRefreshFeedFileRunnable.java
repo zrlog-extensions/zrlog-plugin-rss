@@ -15,7 +15,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AutoRefreshFeedFileRunnable implements Runnable {
@@ -40,7 +39,7 @@ public class AutoRefreshFeedFileRunnable implements Runnable {
             }
             doHandle(feed);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new IllegalStateException("RSS refresh failed", e);
         }
     }
 
