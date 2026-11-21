@@ -1,8 +1,12 @@
 package com.zrlog.plugin.rss.vo;
 
+import com.zrlog.plugin.data.codec.PluginAppearance;
+
 import com.zrlog.plugin.message.Plugin;
 
 public class RssPageData {
+
+    private PluginAppearance appearance;
 
     private boolean dark;
     private String colorPrimary;
@@ -57,5 +61,8 @@ public class RssPageData {
 
     public void setRssText(String rssText) {
         this.rssText = rssText;
+    }
+    public void setAppearance(PluginAppearance appearance) {
+        this.appearance = appearance;
     }
 }

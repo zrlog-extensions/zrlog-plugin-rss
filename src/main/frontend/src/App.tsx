@@ -1,19 +1,22 @@
+import Input from "@zrlog/ui/antd/Input";
+import Typography from "@zrlog/ui/antd/Typography";
+import {useUiApp} from "@zrlog/ui/feedback";
+import CopyOutlined from "@zrlog/ui/icons/copy";
+import SaveOutlined from "@zrlog/ui/icons/save";
+import GlobalOutlined from "@zrlog/ui/icons/globe";
+import InfoCircleOutlined from "@zrlog/ui/icons/info";
 import {
     Button,
     Card,
     Form,
     Grid,
-    Input,
-    Typography,
-    message,
     theme,
-    Alert
+    Alert,
 } from "antd";
 import axios from "axios";
 import {FunctionComponent, useState} from "react";
 import styled from "styled-components";
 import {RssInfoResponse, StandardResponse} from "./index";
-import {CopyOutlined, SaveOutlined, GlobalOutlined, InfoCircleOutlined} from "@ant-design/icons";
 
 const {Paragraph, Text} = Typography;
 
@@ -141,7 +144,7 @@ const App: FunctionComponent<AppProps> = ({data}) => {
     const [loading, setLoading] = useState(false);
     const [previewKey, setPreviewKey] = useState(0);
     const [form] = Form.useForm<RssFormValues>();
-    const [messageApi, contextHolder] = message.useMessage();
+    const {message: messageApi} = useUiApp();
 
     const handleCopy = () => {
         navigator.clipboard.writeText('<plugin name="rss" view="widget"/>');
@@ -174,7 +177,6 @@ const App: FunctionComponent<AppProps> = ({data}) => {
 
     return (
         <Shell>
-            {contextHolder}
 
             <HeaderSection>
                 <Title>RSS 订阅设置</Title>

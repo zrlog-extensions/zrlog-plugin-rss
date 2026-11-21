@@ -7,6 +7,7 @@ import com.zrlog.plugin.data.codec.ContentType;
 import com.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.zrlog.plugin.data.codec.MsgPacket;
 import com.zrlog.plugin.data.codec.MsgPacketStatus;
+import com.zrlog.plugin.data.codec.PluginAppearance;
 import com.zrlog.plugin.render.SimpleTemplateRender;
 import com.zrlog.plugin.rss.Application;
 import com.zrlog.plugin.rss.handle.AutoRefreshFeedFileRunnable;
@@ -51,7 +52,7 @@ public class RssController {
         session.sendJsonMsg(WebsiteKeyRequest.of("uriPath,rssText"), ActionType.GET_WEBSITE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST, msgPacket -> {
             RssConfig config = normalizeConfig(gson.fromJson(msgPacket.getDataStr(), RssConfig.class));
             Map<String, Object> data = new HashMap<>();
-            data.put("theme", isDarkMode() ? "dark" : "light");
+
             data.put("data", gson.toJson(RssApiResponse.success(pageData(config))));
             session.responseHtmlStr(new SimpleTemplateRender().render("/templates/index", session.getPlugin(), data), requestPacket.getMethodStr(), requestPacket.getMsgId());
         });
@@ -77,6 +78,7 @@ public class RssController {
 
     private RssPageData pageData(RssConfig config) {
         RssPageData data = new RssPageData();
+        data.setAppearance(PluginAppearance.from(requestInfo));
         data.setDark(isDarkMode());
         data.setColorPrimary(getAdminColorPrimary());
         data.setAdminColorPrimary(getAdminColorPrimary());
